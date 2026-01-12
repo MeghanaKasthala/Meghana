@@ -1,0 +1,95 @@
+package oops;
+abstract class Missile {
+
+    protected String missileId;
+    protected int range;
+
+    public Missile(String missileId, int range) {
+        this.missileId = missileId;
+        this.range = range;
+    }
+
+    public abstract boolean launch(int threatLevel, boolean hasClearance);
+}
+
+
+class NuclearMissile extends Missile {
+
+    public NuclearMissile(String missileId, int range) {
+        super(missileId, range);
+    }
+
+    @Override
+    public boolean launch(int threatLevel, boolean hasClearance) {
+        if (threatLevel >= 9 && hasClearance) {
+            return true;
+        }
+        return false;
+    }
+}
+
+
+class TorpedoMissile extends Missile {
+
+    public TorpedoMissile(String missileId, int range) {
+        super(missileId, range);
+    }
+
+    @Override
+    public boolean launch(int threatLevel, boolean hasClearance) {
+        return threatLevel >= 5;
+    }
+}
+
+
+class DefenseInterceptor extends Missile {
+
+    public DefenseInterceptor(String missileId, int range) {
+        super(missileId, range);
+    }
+
+    @Override
+    public boolean launch(int threatLevel, boolean hasClearance) {
+        return threatLevel >= 3;
+    }
+}
+
+
+public class SubmarineLaunchTest {
+
+    private static void executeLaunch(Missile missile,
+                                      int threatLevel,
+                                      boolean clearance) {
+
+        System.out.println("Missile ID: " + missile.missileId);
+
+        boolean approved = missile.launch(threatLevel, clearance);
+
+        if (approved) {
+            System.out.println("Launch Status: APPROVED");
+
+            if (missile instanceof DefenseInterceptor) {
+                System.out.println("Interceptor launched successfully");
+            } else {
+                System.out.println("Missile launched successfully");
+            }
+
+        } else {
+            System.out.println("Launch Status: DENIED");
+
+            if (missile instanceof NuclearMissile) {
+                System.out.println(
+                        "Reason: Threat level insufficient for nuclear launch"
+                );
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Missile nuclear = new NuclearMissile("NUC-778", 12000);
+        executeLaunch(nuclear, 8, true);
+        System.out.println();
+        Missile interceptor = new DefenseInterceptor("DEF-109", 5000);
+        executeLaunch(interceptor, 4, false);
+    }
+}
